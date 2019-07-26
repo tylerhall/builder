@@ -200,10 +200,10 @@ slack_log() {
 
 update_git() {
 	if [ "$GIT_BRANCH" == "" ] || [ "$GIT_BRANCH" == "null" ]; then
-		log_message "GIT_BRANCH not defined so using current state of repo..."
-		log_message "`git -C "$SRC_PATH" status`"
+		# log_message "GIT_BRANCH not defined so using current state of repo..."
+		# log_message "`git -C "$SRC_PATH" status`"
 	else
-		log_message "Resetting to most recent commit on $GIT_BRANCH"
+		# log_message "Resetting to most recent commit on $GIT_BRANCH"
 	    git -C "$SRC_PATH" reset --hard
 	    git -C "$SRC_PATH" fetch --all
 	    git -C "$SRC_PATH" checkout $GIT_BRANCH
