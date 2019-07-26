@@ -62,8 +62,10 @@
 #   "force_run" : false
 # }
 
-# When you run the script, it will clear away any uncommitted work, pull down the latest changes, and
-# if any new ones are detected, begin the build process.
+# When you run the script, if you specify a GIT_BRANCH to checkout, it will clear away any uncommitted work, pull
+# down the latest changes, and if any new ones are detected, begin the build process.
+
+# If GIT_BRANCH is not specified or is an empty string, the repo will be used in whatever current state it is in.
 
 # NOTE: If no new changes are detected, the script will immedaitely exit. However, you can override this
 # behavior and force the script to run by including a "force" argument like this...
@@ -149,7 +151,11 @@ log_message() {
     echo "### $1"
     echo ""
     if [[ "$SLACK_WEBHOOK" =~ .*slack.* ]]; then
-        curl -s -d "{'text':'$1'}" -H "Content-Type: application/json" -X POST "$SLACK_WEBHOOK" > /dev/null
+		echo $1 > "$BUILDER_PATH/.text"
+        $JQ_PATH -n --rawfile message "$BUILDER_PATH/.text" '{"text":$message}' > "$BUILDER_PATH/.json"
+        curl -s -d @"$BUILDER_PATH/.json" -H "Content-Type: application/json" -X POST "$SLACK_WEBHOOK" > /dev/null
+		rm "$BUILDER_PATH/.text"
+		rm "$BUILDER_PATH/.json"
     fi
 }
 
@@ -193,10 +199,16 @@ slack_log() {
 # ###########################
 
 update_git() {
-    git -C "$SRC_PATH" reset --hard
-    git -C "$SRC_PATH" fetch --all
-    git -C "$SRC_PATH" checkout $GIT_BRANCH
-    git -C "$SRC_PATH" pull
+	if [ "$GIT_BRANCH" == "" ] || [ "$GIT_BRANCH" == "null" ]; then
+		log_message "GIT_BRANCH not defined so using current state of repo..."
+		log_message "`git -C "$SRC_PATH" status`"
+	else
+		log_message "Resetting to most recent commit on $GIT_BRANCH"
+	    git -C "$SRC_PATH" reset --hard
+	    git -C "$SRC_PATH" fetch --all
+	    git -C "$SRC_PATH" checkout $GIT_BRANCH
+	    git -C "$SRC_PATH" pull		
+	fi
 }
 
 # This function immediately ends the script execution if no new commits are found - unless FORCE_RUN == true.
