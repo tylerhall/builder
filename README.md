@@ -45,7 +45,9 @@ In either situation, builder.json contains a single JSON dictionary that configu
 }
 ```
 
-When you run the script, it will clear away any uncommitted work, pull down the latest changes, and if any new ones are detected, begin the build process.
+When you run the script, if you specify a GIT_BRANCH to checkout, it will clear away any uncommitted work, pull down the latest changes, and if any new ones are detected, begin the build process.
+
+However, if GIT_BRANCH is not specified or is an empty string, the repo will be used in whatever current state it is in.
 
 **NOTE:** If no new changes are detected, the script will immedaitely exit. However, you can override this behavior and force the script to run by including a `force` argument like this...
 
