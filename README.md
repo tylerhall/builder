@@ -12,7 +12,7 @@ So this script is the result of me taking a few days to cobble together a clean 
 
 **Caveats:** I'm not an `xcodebuild` expert. I don't claim this script will handle your hand-crafted, artisinal Xcode workspace/project. But it should handle most common scenarios and be tweakable for the rest.
 
-Also, while I do know my way around a shell pretty well, I'm by no means a pro. So those of you who are more exprienced with bash scripting will likely look at a lot of the commmands and approaches below and laugh. (Especically around my complete lack of knowledge about variable expansion!) And that's OK. Feedback is welcome! Pull requests are especially welcome and appreciated!
+Also, while I do know my way around a shell pretty well, I'm by no means a pro. So those of you who are more exprienced with bash scripting will likely look at a lot of the commmands and approaches below and laugh. (Especially around my complete lack of knowledge about variable expansion!) And that's OK. Feedback is welcome! Pull requests are especially welcome and appreciated!
 
 # INSTRUCTIONS
 
