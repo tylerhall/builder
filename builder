@@ -122,7 +122,7 @@
 # When run, the script will echo the path to the log files directory in case you want to `tail -f` and follow along
 # with the build progress. (I would like to add a --verbose option at some point that echoes ALL of the various build
 # tasks output to stdout so it's easier to follow. But that's for another day...)
-	
+
 # Anyway, like I said, I don't claim this script is perfectly robust, foolproof, or the best choice for every situation.
 # But it meets my needs, and hopefully you'll find it useful, too!
 
@@ -151,11 +151,11 @@ log_message() {
     echo "### $1"
     echo ""
     if [[ "$SLACK_WEBHOOK" =~ .*slack.* ]]; then
-		echo $1 > "$BUILDER_PATH/.text"
+        echo $1 > "$BUILDER_PATH/.text"
         $JQ_PATH -n --rawfile message "$BUILDER_PATH/.text" '{"text":$message}' > "$BUILDER_PATH/.json"
         curl -s -d @"$BUILDER_PATH/.json" -H "Content-Type: application/json" -X POST "$SLACK_WEBHOOK" > /dev/null
-		rm "$BUILDER_PATH/.text"
-		rm "$BUILDER_PATH/.json"
+        rm "$BUILDER_PATH/.text"
+        rm "$BUILDER_PATH/.json"
     fi
 }
 
@@ -199,16 +199,16 @@ slack_log() {
 # ###########################
 
 update_git() {
-	if [ "$GIT_BRANCH" == "" ] || [ "$GIT_BRANCH" == "null" ]; then
-		# log_message "GIT_BRANCH not defined so using current state of repo..."
-		# log_message "`git -C "$SRC_PATH" status`"
-	else
-		# log_message "Resetting to most recent commit on $GIT_BRANCH"
-	    git -C "$SRC_PATH" reset --hard
-	    git -C "$SRC_PATH" fetch --all
-	    git -C "$SRC_PATH" checkout $GIT_BRANCH
-	    git -C "$SRC_PATH" pull		
-	fi
+    # Only update with git if a branch is specified. This gives us the option to NOT specify
+    # a branch, which allows us to build using whatever branch and dirty state the repo
+    # happens to be in.
+    if [ "$GIT_BRANCH" != "" ] && [ "$GIT_BRANCH" != "null" ]; then
+        # log_message "Resetting to most recent commit on $GIT_BRANCH"
+        git -C "$SRC_PATH" reset --hard
+        git -C "$SRC_PATH" fetch --all
+        git -C "$SRC_PATH" checkout $GIT_BRANCH
+        git -C "$SRC_PATH" pull
+    fi
 }
 
 # This function immediately ends the script execution if no new commits are found - unless FORCE_RUN == true.
@@ -275,7 +275,7 @@ unlock_keychain() {
 
     log_message "Unlocking keychain..."
 
-	source $HOME/.pw
+    source $HOME/.pw
     security unlock-keychain -p $KEYCHAIN_PW ~/Library/Keychains/login.keychain
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
