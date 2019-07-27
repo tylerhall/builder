@@ -467,7 +467,9 @@ source $HOME/.pw # Our App Store Connect and keychain credentials are stored in 
 mkdir -p $BUILDER_PATH/.last_commits
 mkdir -p $BUILDER_PATH/.archives
 mkdir -p $LOG_PATH
-rm -rf "$ARCHIVE_PATH"
+
+# Remove archives older than 30 days.
+find "$BUILDER_PATH/.archives" -type d -mtime +30 -delete
 
 # ###########################
 # LET'S DO THIS!
