@@ -45,7 +45,7 @@
 
 # {
 #   "project_name" : "Your App",
-#   "workspace_path" : "$HOME/src/path-to-project/App.xcworkspace",
+#   "workspace_path" : "App.xcworkspace",
 #   "scheme" : "Scheme Name",
 #   "git_branch" : "release/testflight",
 #   "increment_build" : false,
@@ -73,6 +73,8 @@
 # /path/to/builder /path/to/projects/builder.json force
 
 # Or by setting "force_run" to true in the JSON config file or via stdin.
+
+# It is assumed that WORKSPACE_PATH is the filename of an .xcworkspace inside the same directory that builder.json is in.
 
 # NOTE: Because this script will do a git --reset hard, if you set it up to run automatically, it should
 # probably be done on a dedicated build machine or in a separate cloned repo that isn't your primary
@@ -410,6 +412,7 @@ if [ ! "$1" == "" ]; then
         exit 1
     fi
     CONFIG=`cat "$1"`
+	JSON_DIR=`dirname "$1"`
 else
     log_message "Reading config from stdin..."
     CONFIG=`cat`
@@ -435,8 +438,8 @@ TAG_RELEASE=`$JQ_PATH -r '.tag_release' "$BUILDER_PATH/.config"`
 DELETE_DERIVED_DATA=`$JQ_PATH -r '.delete_derived_data' "$BUILDER_PATH/.config"`
 FORCE_RUN=`$JQ_PATH -r '.force_run' "$BUILDER_PATH/.config"`
 
-TMP_PATH=`$JQ_PATH -r '.workspace_path' "$BUILDER_PATH/.config"`
-WORKSPACE_PATH=`eval echo "$TMP_PATH"`
+WORKSPACE_PATH=`$JQ_PATH -r '.workspace_path' "$BUILDER_PATH/.config"`
+WORKSPACE_PATH="$JSON_DIR/$WORKSPACE_PATH"
 
 rm "$BUILDER_PATH/.config"
 
