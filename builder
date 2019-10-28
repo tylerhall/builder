@@ -59,7 +59,8 @@
 #   "submit" : true,
 #   "tag_release" : true,
 #   "slack_webhook" : "https://hooks.slack.com/services/XXXXXXXX/YYYYYYYYY/ZZZZZZZZZZZZZZZZZ",
-#   "force_run" : false
+#   "force_run" : false,
+#   "post_command" : "/path/to/some/script"
 # }
 
 # When you run the script, if you specify a GIT_BRANCH to checkout, it will clear away any uncommitted work, pull
@@ -403,6 +404,14 @@ tag_release() {
     fi
 }
 
+# Runs a command after everything else has finished.
+run_post_command() {
+    if [ -f "$POST_COMMAND" ]; then
+		log_message "Running post command $POST_COMMAND"
+		$POST_COMMAND
+	fi
+}
+
 # ###########################
 # LOAD OUR SETTINGS FROM either builder.json or stdin
 # ###########################
@@ -438,6 +447,7 @@ SLACK_WEBHOOK=`$JQ_PATH -r '.slack_webhook' "$BUILDER_PATH/.config"`
 TAG_RELEASE=`$JQ_PATH -r '.tag_release' "$BUILDER_PATH/.config"`
 DELETE_DERIVED_DATA=`$JQ_PATH -r '.delete_derived_data' "$BUILDER_PATH/.config"`
 FORCE_RUN=`$JQ_PATH -r '.force_run' "$BUILDER_PATH/.config"`
+POST_COMMAND=`$JQ_PATH -r '.post_command' "$BUILDER_PATH/.config"`
 
 WORKSPACE_PATH=`$JQ_PATH -r '.workspace_path' "$BUILDER_PATH/.config"`
 WORKSPACE_PATH="$JSON_DIR/$WORKSPACE_PATH"
@@ -504,6 +514,7 @@ export_build
 validate_app
 submit_app
 tag_release
+run_post_command
 
 # ###########################
 # SUCCESS!
