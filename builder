@@ -209,7 +209,7 @@ update_git() {
         git -C "$SRC_PATH" reset --hard
         git -C "$SRC_PATH" fetch --all
         git -C "$SRC_PATH" checkout $GIT_BRANCH
-        git -C "$SRC_PATH" pull
+	git -C "$SRC_PATH" pull --recurse-submodules
     fi
 }
 
@@ -289,6 +289,7 @@ unlock_keychain() {
 clean_workspace() {
     if [ $CLEAN == "true" ]; then
         log_message "Cleaning..."
+		echo $WORKSPACE_PATH
         xcodebuild clean -workspace "$WORKSPACE_PATH" -scheme $SCHEME
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
