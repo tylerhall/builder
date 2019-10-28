@@ -210,6 +210,7 @@ update_git() {
         git -C "$SRC_PATH" reset --hard
         git -C "$SRC_PATH" fetch --all
         git -C "$SRC_PATH" checkout $GIT_BRANCH
+	git -C "$SRC_PATH" submodule update --init --recursive
 	git -C "$SRC_PATH" pull --recurse-submodules
     fi
 }
