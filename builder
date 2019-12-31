@@ -292,7 +292,7 @@ clean_workspace() {
     if [ $CLEAN == "true" ]; then
         log_message "Cleaning..."
 		echo $WORKSPACE_PATH
-        xcodebuild clean -workspace "$WORKSPACE_PATH" -scheme $SCHEME
+        xcodebuild clean -workspace "$WORKSPACE_PATH" -scheme "$SCHEME"
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
             log_failure "Clean failed."
@@ -335,7 +335,7 @@ carthage_update() {
 build_for_archiving() {
     if [ $BUILD == "true" ]; then
         log_message "Building..."
-        xcodebuild -workspace "$WORKSPACE_PATH" -scheme $SCHEME -destination "generic/platform=iOS"  archive -archivePath "$ARCHIVE_PATH/App" > "$LOG_PATH/build.log" 2> "$LOG_PATH/build-error.log"
+        xcodebuild -workspace "$WORKSPACE_PATH" -scheme "$SCHEME" -destination "generic/platform=iOS"  archive -archivePath "$ARCHIVE_PATH/App" > "$LOG_PATH/build.log" 2> "$LOG_PATH/build-error.log"
         RESULT=$?
         if [ $RESULT -ne 0 ]; then
             log_failure "Build failed." "$LOG_PATH/build.log" "$LOG_PATH/build-error.log"
